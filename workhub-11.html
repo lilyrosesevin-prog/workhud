@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WorkHub 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FDF7F4;--cream:#FFFBF9;--rose:#E8A0B0;--rose-d:#C4607A;--rose-p:#F9E4EC;
+  --olive:#7A8C5C;--olive-d:#566140;--olive-p:#EAF0DC;--olive-m:#9AAD74;
+  --text:#3D2B35;--muted:#9C8690;--border:#EDD8E2;
+}
+body{background:var(--bg);color:var(--text);font-family:'Jost',sans-serif;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.bg-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.login-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{width:100%;max-width:380px;background:var(--cream);border:1.5px solid var(--border);border-radius:24px;padding:36px 28px;box-shadow:0 20px 60px rgba(200,120,140,.15);text-align:center}
+.login-flower{font-size:48px;margin-bottom:8px}
+.login-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;font-style:italic;color:var(--rose-d);margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.login-tabs{display:flex;gap:6px;margin-bottom:20px;background:var(--bg);border-radius:12px;padding:4px}
+.login-tab{flex:1;padding:8px;border-radius:9px;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;font-weight:500;color:var(--muted);background:transparent;transition:all .2s}
+.login-tab.on{background:white;color:var(--rose-d);box-shadow:0 2px 8px rgba(200,120,140,.12)}
+.lf-wrap{margin-bottom:12px;text-align:left}
+.lf-wrap label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px}
+.pw-wrap{position:relative}
+.lfield{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'Jost',sans-serif;outline:none;transition:border-color .2s}
+.lfield:focus{border-color:var(--rose)}
+.lfield.pw{padding-right:44px}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:0;line-height:1}
+.lerr{font-size:12px;color:var(--rose-d);background:var(--rose-p);padding:8px 12px;border-radius:9px;margin-bottom:12px;display:none;text-align:left}
+.lbtn{width:100%;padding:12px;border-radius:12px;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:14px;font-weight:600;background:linear-gradient(135deg,#E8A0B0,#D4778A);color:white;box-shadow:0 4px 14px rgba(212,119,138,.3);transition:all .2s;margin-top:4px}
+.lbtn:hover{background:linear-gradient(135deg,#D4778A,#C4607A)}
+.existing-users{margin-top:18px;text-align:left}
+.eu-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600;margin-bottom:8px}
+.eu-chip{display:inline-flex;align-items:center;gap:6px;background:var(--rose-p);border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;margin:3px;cursor:pointer;font-size:12px;color:var(--rose-d);transition:all .2s}
+.eu-chip:hover{background:#F2D0DC}
+.av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--rose-d));color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.header{position:sticky;top:0;z-index:50;background:rgba(253,247,244,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;font-style:italic;color:var(--rose-d);display:flex;align-items:center;gap:8px}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--olive)}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.date-chip{font-size:11px;color:var(--muted);background:var(--rose-p);padding:4px 12px;border-radius:20px;font-weight:500}
+.live{width:7px;height:7px;border-radius:50%;background:var(--olive-m);animation:breathe 2.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.55}}
+.user-pill{display:flex;align-items:center;gap:7px;background:var(--rose-p);padding:4px 12px 4px 5px;border-radius:20px;cursor:pointer;transition:all .2s}
+.user-pill:hover{background:#F2D0DC}
+.user-pill-name{font-size:12px;font-weight:500;color:var(--rose-d)}
+.layout{display:flex;min-height:calc(100vh - 60px);position:relative;z-index:1}
+.sidebar{width:220px;flex-shrink:0;background:rgba(255,251,249,.97);border-right:1px solid var(--border);padding:18px 10px;display:flex;flex-direction:column;gap:2px;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.content{flex:1;padding:28px 30px;overflow-y:auto;max-height:calc(100vh - 60px)}
+.nav-sec{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:#C4A0B0;padding:12px 10px 5px;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .2s;border:1px solid transparent;position:relative;user-select:none}
+.nav-item:hover{background:var(--rose-p);color:var(--rose-d)}
+.nav-item.on{background:linear-gradient(135deg,var(--rose-p),var(--olive-p));color:var(--rose-d);border-color:var(--border);font-weight:500}
+.nav-item.on::before{content:'';position:absolute;left:0;top:22%;bottom:22%;width:3px;background:linear-gradient(to bottom,var(--rose),var(--olive));border-radius:0 3px 3px 0}
+.nav-ico{font-size:15px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;background:var(--olive-m);color:white}
+.page{display:none}.page.on{display:block}
+.ptitle{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;font-style:italic;color:var(--text);margin-bottom:5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.psub{font-size:13px;color:var(--muted);margin-bottom:20px}
+.ptag{font-family:'Jost',sans-serif;font-style:normal;font-size:11px;font-weight:500;padding:3px 11px;border-radius:20px;background:var(--rose-p);color:var(--rose-d)}
+.ptag.ol{background:var(--olive-p);color:var(--olive)}
+.card{background:var(--cream);border:1.5px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(200,120,140,.06);transition:box-shadow .2s,border-color .2s}
+.card:hover{border-color:var(--rose);box-shadow:0 4px 18px rgba(200,120,140,.1)}
+.field{background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:9px 13px;color:var(--text);font-size:13px;font-family:'Jost',sans-serif;outline:none;transition:border-color .2s;width:100%}
+.field:focus{border-color:var(--rose)}
+.field::placeholder{color:#C4A0B0}
+textarea.field{min-height:160px;resize:vertical}
+.btn{padding:8px 16px;border-radius:11px;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:13px;font-weight:500;transition:all .18s}
+.b-rose{background:linear-gradient(135deg,#E8A0B0,#D4778A);color:white}
+.b-rose:hover{background:linear-gradient(135deg,#D4778A,#C4607A)}
+.b-olive{background:linear-gradient(135deg,#9AAD74,#7A8C5C);color:white}
+.b-olive:hover{background:linear-gradient(135deg,#7A8C5C,#566140)}
+.b-soft{background:var(--rose-p);color:var(--rose-d);border:1.5px solid var(--border)}
+.b-soft:hover{background:#F2D0DC}
+.b-soft.ol{background:var(--olive-p);color:var(--olive);border-color:#D5E3BB}
+.b-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border)}
+.b-ghost:hover{border-color:var(--rose);color:var(--rose-d)}
+.b-sm{padding:5px 11px;font-size:12px;border-radius:9px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.f1{flex:1;min-width:120px}
+.trow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F4E6ED}
+.trow:last-of-type{border-bottom:none}
+.chk{width:20px;height:20px;border-radius:50%;border:2px solid var(--rose);cursor:pointer;background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .2s}
+.chk.dk{background:linear-gradient(135deg,var(--olive-m),var(--olive));border-color:var(--olive);color:white}
+.tlbl{flex:1;font-size:13px}
+.tlbl.dk{text-decoration:line-through;color:var(--muted)}
+.tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.tg-urgent{background:var(--rose-p);color:var(--rose-d)}
+.tg-work{background:var(--olive-p);color:var(--olive)}
+.tg-perso{background:#F0EBF8;color:#8B6AB5}
+.rm{background:none;border:none;color:#C4A0B0;cursor:pointer;font-size:17px;line-height:1}
+.rm:hover{color:var(--rose-d)}
+.ngrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ntile{background:var(--cream);border:1.5px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all .2s}
+.ntile:hover{border-color:var(--rose);transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,120,140,.11)}
+.ntitle{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:7px}
+.nbody{font-size:12px;color:var(--muted);line-height:1.65;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ndate{font-size:10px;color:#C4A0B0;margin-top:9px}
+.nadd{background:transparent;border:1.5px dashed var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;color:#C4A0B0;font-size:13px;min-height:100px}
+.nadd:hover{border-color:var(--olive-m);color:var(--olive)}
+.wstrip{display:flex;gap:5px;margin-bottom:20px}
+.dcell{flex:1;text-align:center;padding:9px 3px;border-radius:12px;border:1.5px solid var(--border);background:var(--cream);transition:all .2s}
+.dcell.td{background:linear-gradient(135deg,var(--rose),var(--rose-d));border-color:var(--rose-d)}
+.dname{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:3px}
+.dcell.td .dname{color:rgba(255,255,255,.8)}
+.dnum{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--text)}
+.dcell.td .dnum{color:white}
+.qlgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.qltile{border-radius:14px;padding:16px;text-align:center;transition:all .2s;text-decoration:none;display:block}
+.qltile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(150,80,100,.1)}
+.kgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ktile{border-radius:14px;padding:14px;cursor:pointer;transition:all .2s}
+.ktile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(150,80,100,.12)}
+.ktitle2{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--text)}
+.kbody2{font-size:11px;line-height:1.65;color:var(--text);display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.kitem{font-size:11px;margin-bottom:3px;display:flex;gap:4px;color:var(--text)}
+.kitem.dkk{opacity:.45;text-decoration:line-through}
+.kfoot{display:flex;justify-content:space-between;align-items:center;margin-top:9px;font-size:10px;opacity:.65;color:var(--text)}
+.kadd{border-radius:14px;border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;color:#C4A0B0;font-size:12px;min-height:90px;transition:all .2s}
+.kadd:hover{border-color:var(--olive-m);color:var(--olive)}
+.kfilters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.kfbtn{font-size:11px;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Jost',sans-serif;transition:all .15s}
+.kfbtn.on{background:var(--rose-p);border-color:var(--rose);color:var(--rose-d)}
+.pinlbl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:#C4A0B0;margin-bottom:9px;font-weight:600}
+.overlay{position:fixed;inset:0;background:rgba(61,43,53,.38);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.overlay.on{display:flex}
+.modal{width:480px;max-width:94vw;border-radius:20px;padding:24px;border:1.5px solid var(--border);box-shadow:0 20px 60px rgba(150,80,100,.18)}
+.mtitle{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;font-style:italic;color:var(--text);margin-bottom:14px}
+.crow{display:flex;gap:6px;margin:7px 0 12px}
+.cdot{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .15s}
+.cdot:hover,.cdot.sel{transform:scale(1.3);border-color:white;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stile{background:var(--cream);border:1.5px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all .2s;position:relative}
+.stile:hover{border-color:var(--rose);box-shadow:0 4px 14px rgba(200,120,140,.11);transform:translateY(-2px)}
+.snum{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;line-height:1}
+.sdesc{font-size:11px;color:var(--muted);margin-top:4px}
+.sico{position:absolute;top:13px;right:13px;font-size:20px;opacity:.4}
+.clock{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:600;text-align:center;background:linear-gradient(135deg,var(--rose-d),var(--olive));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:24px}
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.tpl-tile{background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}
+.tpl-tile:hover{border-color:var(--rose);background:var(--rose-p)}
+@media(max-width:700px){
+  .sidebar{display:none}.content{padding:16px}
+  .ngrid,.kgrid,.qlgrid,.tpl-grid{grid-template-columns:1fr 1fr}
+  .sgrid{grid-template-columns:1fr 1fr}.wstrip{gap:3px}
+}
+</style>
+</head>
+<body>
+<div class="bg-deco" id="bgDeco"></div>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-flower">🌸</div>
+    <div class="login-title">WorkHub</div>
+    <div class="login-sub">Ton espace de travail personnel</div>
+    <div class="login-tabs">
+      <button class="login-tab on" id="tabLogin" onclick="switchTab('login')">Se connecter</button>
+      <button class="login-tab" id="tabReg" onclick="switchTab('register')">Creer un compte</button>
+    </div>
+    <div id="loginErr" class="lerr"></div>
+    <div id="fLogin">
+      <div class="lf-wrap"><label>Prenom</label><input class="lfield" id="lName" placeholder="Ton prenom..."/></div>
+      <div class="lf-wrap"><label>Mot de passe</label><div class="pw-wrap"><input class="lfield pw" id="lPass" type="password" placeholder="••••••••"/><button class="eye" type="button" onclick="toggleEye('lPass',this)">🙈</button></div></div>
+      <button class="lbtn" onclick="doLogin()">Se connecter</button>
+    </div>
+    <div id="fReg" style="display:none">
+      <div class="lf-wrap"><label>Prenom</label><input class="lfield" id="rName" placeholder="Ton prenom..."/></div>
+      <div class="lf-wrap"><label>Mot de passe</label><div class="pw-wrap"><input class="lfield pw" id="rPass" type="password" placeholder="Choisis un mot de passe..."/><button class="eye" type="button" onclick="toggleEye('rPass',this)">🙈</button></div></div>
+      <div class="lf-wrap"><label>Confirmer</label><div class="pw-wrap"><input class="lfield pw" id="rPass2" type="password" placeholder="Repete le mot de passe..."/><button class="eye" type="button" onclick="toggleEye('rPass2',this)">🙈</button></div></div>
+      <button class="lbtn" onclick="doRegister()">Creer mon compte</button>
+    </div>
+    <div class="existing-users" id="existingUsers"></div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="logo">WorkHub <div class="logo-dot"></div></div>
+  <div class="hdr-r" id="hdrR">
+    <div class="date-chip" id="dateChip"></div>
+    <div class="live"></div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="nav-sec">Navigation</div>
+    <div class="nav-item on" data-p="dashboard"><span class="nav-ico">⌂</span><span>Tableau de bord</span></div>
+    <div class="nav-item" data-p="tasks"><span class="nav-ico">✓</span><span>Taches</span><span class="nav-badge" id="taskBadge">0</span></div>
+    <div class="nav-item" data-p="notes"><span class="nav-ico">✦</span><span>Notes rapides</span></div>
+    <div class="nav-item" data-p="calendar"><span class="nav-ico">◈</span><span>Agenda</span></div>
+    <div class="nav-item" data-p="drive"><span class="nav-ico">❋</span><span>Google Drive</span></div>
+    <div class="nav-item" data-p="keep"><span class="nav-ico">✿</span><span>Google Keep</span></div>
+    <div class="nav-item" data-p="ai"><span class="nav-ico">◇</span><span>Assistante IA</span></div>
+  </nav>
+  <main class="content">
+    <div class="page on" id="page-dashboard">
+      <div class="ptitle">✿ Tableau de bord <span class="ptag ol">En ligne</span></div>
+      <div class="psub" id="todayDate"></div>
+      <div class="clock" id="clock"></div>
+      <div class="sgrid">
+        <div class="stile" onclick="nav('tasks')"><div class="sico">🌸</div><div class="snum" style="color:#C4607A" id="dTask">0/0</div><div class="sdesc">Taches du jour</div></div>
+        <div class="stile" onclick="nav('calendar')"><div class="sico">🗓</div><div class="snum" style="color:#7A8C5C">4</div><div class="sdesc">Evenements</div></div>
+        <div class="stile" onclick="nav('notes')"><div class="sico">🌿</div><div class="snum" style="color:#D4778A" id="dNotes">0</div><div class="sdesc">Notes actives</div></div>
+        <div class="stile" onclick="nav('keep')"><div class="sico">📌</div><div class="snum" style="color:#566140" id="dKeep">0</div><div class="sdesc">Keep epinglees</div></div>
+      </div>
+      <div class="card"><div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:11px">Prochain evenement</div><div style="display:flex;gap:14px;align-items:center"><div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#C4607A;line-height:1">09:00</div><div><div style="font-size:14px;font-weight:500">Reunion equipe projet</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Google Meet - 1h</div></div></div></div>
+      <div class="card"><div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:11px">Taches urgentes</div><div id="dashUrgent"></div></div>
+    </div>
+
+    <div class="page" id="page-tasks">
+      <div class="ptitle">✿ Mes Taches <span class="ptag ol" id="taskCount"></span></div>
+      <div class="psub">Organise tes actions du jour</div>
+      <div class="card">
+        <div id="taskList"></div>
+        <div class="row" style="margin-top:14px;gap:7px">
+          <input class="field f1" id="taskInput" placeholder="Nouvelle tache..."/>
+          <select class="field" id="taskTag" style="width:90px;padding:9px 8px">
+            <option value="work">work</option>
+            <option value="urgent">urgent</option>
+            <option value="perso">perso</option>
+          </select>
+          <button class="btn b-rose b-sm" onclick="addTask()">+ Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-notes">
+      <div class="ptitle" id="notePageTitle">✿ Notes rapides</div>
+      <div class="psub">Tes idees, toujours a portee de main</div>
+      <div id="noteGrid"></div>
+      <div id="noteView" style="display:none"></div>
+      <div id="noteEdit" style="display:none">
+        <div class="card">
+          <input class="field" id="noteTitleInput" placeholder="Titre..." style="margin-bottom:10px;font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600"/>
+          <textarea class="field" id="noteBodyInput" placeholder="Contenu..."></textarea>
+          <div class="row" style="margin-top:12px;gap:8px">
+            <button class="btn b-olive" onclick="saveNote()">Sauvegarder</button>
+            <button class="btn b-ghost" onclick="cancelNote()">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-calendar">
+      <div class="ptitle">✿ Agenda <span class="ptag">Google Calendar</span></div>
+      <div class="psub">Acces rapide a ton agenda</div>
+      <div class="wstrip" id="weekStrip"></div>
+      <div class="qlgrid">
+        <a class="qltile" href="https://calendar.google.com/calendar/r/day" target="_blank" style="background:linear-gradient(135deg,#F9E4EC,#F2D0DC);border:1.5px solid #EDD8E2"><div style="font-size:28px;margin-bottom:6px">📅</div><div style="font-size:13px;font-weight:500;color:#C4607A">Voir aujourd'hui</div></a>
+        <a class="qltile" href="https://calendar.google.com/calendar/r/eventedit" target="_blank" style="background:linear-gradient(135deg,#EAF0DC,#D8EBBF);border:1.5px solid #D5E3BB"><div style="font-size:28px;margin-bottom:6px">➕</div><div style="font-size:13px;font-weight:500;color:#566140">Nouvel evenement</div></a>
+        <a class="qltile" href="https://calendar.google.com/calendar/r/week" target="_blank" style="background:linear-gradient(135deg,#F9E4EC,#F2D0DC);border:1.5px solid #EDD8E2"><div style="font-size:28px;margin-bottom:6px">🗓️</div><div style="font-size:13px;font-weight:500;color:#C4607A">Vue semaine</div></a>
+        <a class="qltile" href="https://calendar.google.com/calendar/r/month" target="_blank" style="background:linear-gradient(135deg,#EAF0DC,#D8EBBF);border:1.5px solid #D5E3BB"><div style="font-size:28px;margin-bottom:6px">🌸</div><div style="font-size:13px;font-weight:500;color:#566140">Vue mois</div></a>
+      </div>
+    </div>
+
+    <div class="page" id="page-drive">
+      <div class="ptitle">✿ Google Drive</div>
+      <div class="psub">Acces a tous tes fichiers en un tap</div>
+      <div class="qlgrid">
+        <a class="qltile" href="https://drive.google.com/drive/my-drive" target="_blank" style="background:linear-gradient(135deg,#F9E4EC,#F2D0DC);border:1.5px solid #EDD8E2"><div style="font-size:28px;margin-bottom:6px">☁️</div><div style="font-size:13px;font-weight:500;color:#C4607A">Mon Drive</div></a>
+        <a class="qltile" href="https://drive.google.com/drive/recent" target="_blank" style="background:linear-gradient(135deg,#EAF0DC,#D8EBBF);border:1.5px solid #D5E3BB"><div style="font-size:28px;margin-bottom:6px">🕐</div><div style="font-size:13px;font-weight:500;color:#566140">Recents</div></a>
+        <a class="qltile" href="https://drive.google.com/drive/shared-with-me" target="_blank" style="background:linear-gradient(135deg,#F9E4EC,#F2D0DC);border:1.5px solid #EDD8E2"><div style="font-size:28px;margin-bottom:6px">🤝</div><div style="font-size:13px;font-weight:500;color:#C4607A">Partages</div></a>
+        <a class="qltile" href="https://docs.new" target="_blank" style="background:linear-gradient(135deg,#EAF0DC,#D8EBBF);border:1.5px solid #D5E3BB"><div style="font-size:28px;margin-bottom:6px">📝</div><div style="font-size:13px;font-weight:500;color:#566140">Nouveau Doc</div></a>
+        <a class="qltile" href="https://sheets.new" target="_blank" style="background:linear-gradient(135deg,#F9E4EC,#F2D0DC);border:1.5px solid #EDD8E2"><div style="font-size:28px;margin-bottom:6px">📊</div><div style="font-size:13px;font-weight:500;color:#C4607A">Nouveau Sheet</div></a>
+        <a class="qltile" href="https://slides.new" target="_blank" style="background:linear-gradient(135deg,#EAF0DC,#D8EBBF);border:1.5px solid #D5E3BB"><div style="font-size:28px;margin-bottom:6px">📑</div><div style="font-size:13px;font-weight:500;color:#566140">Nouvelle Presentation</div></a>
+      </div>
+    </div>
+
+    <div class="page" id="page-keep">
+      <div class="ptitle">✿ Google Keep <span class="ptag" id="keepCount"></span></div>
+      <div class="psub">Tes memos colores</div>
+      <a href="https://keep.google.com" target="_blank" style="text-decoration:none;display:block;margin-bottom:14px">
+        <div style="background:linear-gradient(135deg,#FFF0C2,#FFE082);border:1.5px solid #FFD54F;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+          <div style="font-size:26px">📌</div>
+          <div><div style="font-size:13px;font-weight:500;color:#5D4037">Ouvrir Google Keep</div><div style="font-size:11px;color:#8D6E63;margin-top:2px">Voir toutes tes notes synchronisees</div></div>
+          <div style="margin-left:auto;font-size:16px;color:#8D6E63">→</div>
+        </div>
+      </a>
+      <div class="row" style="justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div class="kfilters" style="margin-bottom:0">
+          <button class="kfbtn on" onclick="filterKeep('all',this)">Toutes</button>
+          <button class="kfbtn" onclick="filterKeep('pinned',this)">Epinglees</button>
+          <button class="kfbtn" onclick="filterKeep('travail',this)">Travail</button>
+          <button class="kfbtn" onclick="filterKeep('perso',this)">Perso</button>
+        </div>
+        <div class="row" style="gap:7px">
+          <button class="btn b-soft b-sm" onclick="openKModal('note')">+ Note</button>
+          <button class="btn b-soft ol b-sm" onclick="openKModal('list')">+ Liste</button>
+        </div>
+      </div>
+      <div id="keepPinned"></div>
+      <div id="keepGrid"></div>
+    </div>
+
+    <div class="page" id="page-ai">
+      <div class="ptitle">✿ Assistante IA <span class="ptag">Claude</span></div>
+      <div class="psub">Templates + acces a Claude</div>
+      <a href="https://claude.ai" target="_blank" style="text-decoration:none;display:block;margin-bottom:20px">
+        <div style="background:linear-gradient(135deg,#F9E4EC,#EAF0DC);border:1.5px solid #EDD8E2;border-radius:16px;padding:18px 20px;display:flex;align-items:center;gap:14px">
+          <div style="font-size:36px">🤖</div>
+          <div style="flex:1"><div style="font-size:15px;font-weight:600;color:#3D2B35;font-family:'Cormorant Garamond',serif">Ouvrir Claude</div><div style="font-size:12px;color:#9C8690;margin-top:3px">Pose toutes tes questions a l'IA</div></div>
+          <div style="font-size:20px;color:#C4607A">→</div>
+        </div>
+      </a>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C4A0B0;font-weight:600;margin-bottom:12px">Templates de taches rapides</div>
+      <div class="tpl-grid" id="tplGrid"></div>
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#C4A0B0;font-weight:600;margin-bottom:12px">Conseils d'organisation</div>
+      <div id="tipCards"></div>
+    </div>
+  </main>
+</div>
+
+<div class="overlay" id="kModal" onclick="closeKModalOutside(event)">
+  <div class="modal" id="kModalBox" style="background:#F7D6E0">
+    <div class="mtitle" id="kModalTitle">Nouvelle note</div>
+    <input class="field" id="kTitle" placeholder="Titre..." style="margin-bottom:10px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px"/>
+    <div id="kNoteArea"><textarea class="field" id="kBody" placeholder="Contenu..." style="min-height:120px;resize:vertical"></textarea></div>
+    <div id="kListArea" style="display:none">
+      <div id="kItemsList"></div>
+      <div class="row" style="gap:6px;margin-top:8px">
+        <input class="field f1" id="kNewItem" placeholder="+ Nouvel element..."/>
+        <button class="btn b-ghost b-sm" onclick="addKItem()">+</button>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:12px;margin-bottom:6px">Couleur</div>
+    <div class="crow" id="kColorPicker"></div>
+    <div class="row" style="margin-top:14px;justify-content:space-between">
+      <div class="row" style="gap:8px">
+        <button class="btn b-olive" onclick="saveKeep()">Sauvegarder</button>
+        <button class="btn b-ghost" onclick="closeKModal()">Annuler</button>
+      </div>
+      <button class="btn b-soft b-sm" id="kDelBtn" style="color:#C4607A;display:none" onclick="deleteKeep()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentUser = null;
+var tasks = [];
+var notes = [];
+var keepNotes = [];
+var noteMode = "grid";
+var activeNote = null;
+var keepFilter = "all";
+var keepEditId = null;
+var kDraftColor = "rose";
+var kDraftType = "note";
+var kDraftItems = [];
+
+var KC = {rose:"#F7D6E0",peach:"#FDDCCC",yellow:"#FFF0C2",green:"#DFF0CE",mint:"#CCF0E6",lavender:"#E8D8F7",blue:"#D4E8F7",warm:"#F7EDD6"};
+var KC_LIST = [{k:"rose",h:"#F7D6E0"},{k:"peach",h:"#FDDCCC"},{k:"yellow",h:"#FFF0C2"},{k:"green",h:"#DFF0CE"},{k:"mint",h:"#CCF0E6"},{k:"lavender",h:"#E8D8F7"},{k:"blue",h:"#D4E8F7"},{k:"warm",h:"#F7EDD6"}];
+
+var TIPS = [
+  {icon:"🌸",title:"Methode 1-3-5",text:"Chaque jour, planifie 1 grande tache, 3 moyennes et 5 petites. Tu seras toujours productive sans te surcharger."},
+  {icon:"🌿",title:"La regle des 2 minutes",text:"Si une tache prend moins de 2 minutes, fais-la immediatement plutot que de la noter."},
+  {icon:"🌸",title:"Bloque du temps",text:"Reserve des creneaux dans ton agenda pour les taches importantes. Traite-les comme des reunions incontournables."},
+  {icon:"🌿",title:"Fin de journee",text:"Prends 5 minutes chaque soir pour noter les 3 priorites du lendemain. Tu demarreras la journee avec clarte."},
+  {icon:"🌸",title:"Dossiers Drive",text:"Nomme tes fichiers avec la date au debut : 2025-04 Rapport Client. Ils se trient automatiquement !"},
+  {icon:"🌿",title:"Les notifications",text:"Coupe tes notifications pendant 1h pour te concentrer. Verifie tes messages a heures fixes plutot qu'en continu."}
+];
+
+var TEMPLATES = [
+  {label:"📋 Reunion",tasks:["Preparer l ordre du jour","Envoyer les invitations","Prendre les notes","Envoyer le compte-rendu"]},
+  {label:"🚀 Nouveau projet",tasks:["Definir les objectifs","Creer le dossier Drive","Reunion de lancement","Etablir le planning"]},
+  {label:"📦 Nouveau poste",tasks:["Installer le VPN","Configurer la messagerie","Acces aux dossiers partages","Se presenter a l equipe"]},
+  {label:"📅 Semaine type",tasks:["Point equipe lundi matin","Traiter les emails urgents","Archiver fichiers vendredi","Rapport hebdomadaire"]},
+  {label:"✈️ Deplacement",tasks:["Reserver transport","Preparer les documents","Informer l equipe","Checklist affaires"]},
+  {label:"📊 Rapport mensuel",tasks:["Collecter les donnees","Rediger le rapport","Valider avec le manager","Envoyer au client"]}
+];
+
+function hashPass(p) {
+  var h = 0;
+  for (var i = 0; i < p.length; i++) { h = ((h << 5) - h) + p.charCodeAt(i); h = h | 0; }
+  return h.toString(36);
+}
+function getUsers() { try { return JSON.parse(localStorage.getItem("wh_users") || "{}"); } catch(e) { return {}; } }
+function saveUsers(u) { localStorage.setItem("wh_users", JSON.stringify(u)); }
+function getUserData(n) { try { return JSON.parse(localStorage.getItem("wh_u_" + n) || "null"); } catch(e) { return null; } }
+function saveUserData(n, d) { localStorage.setItem("wh_u_" + n, JSON.stringify(d)); }
+function saveData() { if (currentUser) saveUserData(currentUser, {tasks:tasks, notes:notes, keep:keepNotes}); }
+
+function switchTab(tab) {
+  document.getElementById("tabLogin").className = "login-tab" + (tab === "login" ? " on" : "");
+  document.getElementById("tabReg").className = "login-tab" + (tab === "register" ? " on" : "");
+  document.getElementById("fLogin").style.display = tab === "login" ? "block" : "none";
+  document.getElementById("fReg").style.display = tab === "register" ? "block" : "none";
+  document.getElementById("loginErr").style.display = "none";
+}
+
+function showErr(msg) {
+  var el = document.getElementById("loginErr");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+function toggleEye(fid, btn) {
+  var f = document.getElementById(fid);
+  if (f.type === "password") { f.type = "text"; btn.textContent = "👁️"; }
+  else { f.type = "password"; btn.textContent = "🙈"; }
+}
+
+function doLogin() {
+  var name = document.getElementById("lName").value.trim();
+  var pass = document.getElementById("lPass").value;
+  if (!name || !pass) { showErr("Remplis tous les champs"); return; }
+  var users = getUsers();
+  if (!users[name.toLowerCase()]) { showErr("Ce prenom est inconnu. Cree un compte !"); return; }
+  if (users[name.toLowerCase()] !== hashPass(pass)) { showErr("Mot de passe incorrect"); return; }
+  loginUser(name);
+}
+
+function doRegister() {
+  var name = document.getElementById("rName").value.trim();
+  var pass = document.getElementById("rPass").value;
+  var pass2 = document.getElementById("rPass2").value;
+  if (!name || !pass || !pass2) { showErr("Remplis tous les champs"); return; }
+  if (pass !== pass2) { showErr("Les mots de passe ne correspondent pas"); return; }
+  if (pass.length < 4) { showErr("Mot de passe trop court (4 car. min)"); return; }
+  var users = getUsers();
+  if (users[name.toLowerCase()]) { showErr("Ce prenom est deja pris"); return; }
+  users[name.toLowerCase()] = hashPass(pass);
+  saveUsers(users);
+  loginUser(name);
+}
+
+function loginUser(name) {
+  currentUser = name;
+  localStorage.setItem("wh_current", name);
+  var data = getUserData(name);
+  if (data) {
+    tasks = data.tasks || [{id:1,text:"Bienvenue sur WorkHub",done:false,tag:"work"}];
+    notes = data.notes || [{id:1,title:"Bienvenue",body:"Cree tes propres notes ici",date:"Maintenant"}];
+    keepNotes = data.keep || [];
+  } else {
+    tasks = [{id:1,text:"Bienvenue sur WorkHub",done:false,tag:"work"}];
+    notes = [{id:1,title:"Bienvenue",body:"Cree tes propres notes ici",date:"Maintenant"}];
+    keepNotes = [];
+  }
+  document.getElementById("loginScreen").style.display = "none";
+  var old = document.getElementById("userPill");
+  if (old) old.remove();
+  var pill = document.createElement("div");
+  pill.className = "user-pill";
+  pill.id = "userPill";
+  pill.onclick = logoutUser;
+  pill.innerHTML = "<div class='av'>" + name.charAt(0).toUpperCase() + "</div><span class='user-pill-name'>" + name + "</span><span style='font-size:10px;color:var(--muted)'>x</span>";
+  var hdrR = document.getElementById("hdrR");
+  hdrR.insertBefore(pill, hdrR.firstChild);
+  renderAll();
+}
+
+function logoutUser() {
+  if (!confirm("Se deconnecter ?")) return;
+  currentUser = null;
+  localStorage.removeItem("wh_current");
+  var pill = document.getElementById("userPill");
+  if (pill) pill.remove();
+  tasks = []; notes = []; keepNotes = [];
+  document.getElementById("loginScreen").style.display = "flex";
+  showExistingUsers();
+}
+
+function showExistingUsers() {
+  var users = getUsers();
+  var names = Object.keys(users);
+  var el = document.getElementById("existingUsers");
+  if (names.length === 0) { el.innerHTML = ""; return; }
+  var html = "<div class='eu-title'>Comptes existants</div>";
+  for (var i = 0; i < names.length; i++) {
+    var n = names[i];
+    html += "<span class='eu-chip' onclick=\"quickLogin('" + n + "')\">";
+    html += "<div class='av' style='width:22px;height:22px;font-size:11px'>" + n.charAt(0).toUpperCase() + "</div>" + n + "</span>";
+  }
+  el.innerHTML = html;
+}
+
+function quickLogin(name) {
+  document.getElementById("lName").value = name;
+  document.getElementById("lPass").focus();
+  switchTab("login");
+}
+
+function nav(page) {
+  document.querySelectorAll(".nav-item").forEach(function(el) { el.classList.toggle("on", el.dataset.p === page); });
+  document.querySelectorAll(".page").forEach(function(el) { el.classList.toggle("on", el.id === "page-" + page); });
+  if (page === "tasks") renderTasks();
+  if (page === "notes") { noteMode = "grid"; renderNotes(); }
+  if (page === "keep") renderKeep();
+  if (page === "calendar") renderCalendar();
+  if (page === "ai") renderAI();
+  if (page === "dashboard") renderDash();
+}
+document.querySelectorAll(".nav-item").forEach(function(el) {
+  el.addEventListener("click", function() { nav(el.dataset.p); });
+});
+
+function updateClock() {
+  var el = document.getElementById("clock");
+  if (el) el.textContent = new Date().toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
+}
+function initDate() {
+  var now = new Date();
+  var chip = document.getElementById("dateChip");
+  if (chip) chip.textContent = now.toLocaleDateString("fr-FR", {weekday:"short", day:"numeric", month:"short"});
+  var td = document.getElementById("todayDate");
+  if (td) td.textContent = now.toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+  updateClock();
+  setInterval(updateClock, 10000);
+}
+
+function renderTasks() {
+  var done = tasks.filter(function(t) { return t.done; }).length;
+  var el = document.getElementById("taskCount");
+  if (el) el.textContent = done + "/" + tasks.length + " faites";
+  var badge = document.getElementById("taskBadge");
+  if (badge) badge.textContent = tasks.filter(function(t) { return !t.done; }).length;
+  var list = document.getElementById("taskList");
+  if (!list) return;
+  if (tasks.length === 0) { list.innerHTML = "<div style='text-align:center;padding:20px;color:var(--muted);font-size:13px'>Aucune tache pour l instant</div>"; return; }
+  list.innerHTML = tasks.map(function(t) {
+    return "<div class='trow'>" +
+      "<button class='chk" + (t.done ? " dk" : "") + "' onclick='toggleTask(" + t.id + ")'>" + (t.done ? "✓" : "") + "</button>" +
+      "<span class='tlbl" + (t.done ? " dk" : "") + "'>" + t.text + "</span>" +
+      "<span class='tag tg-" + t.tag + "'>" + t.tag + "</span>" +
+      "<button class='rm' onclick='removeTask(" + t.id + ")'>x</button>" +
+      "</div>";
+  }).join("");
+  renderDash();
+}
+
+function toggleTask(id) {
+  tasks = tasks.map(function(t) { return t.id === id ? {id:t.id, text:t.text, done:!t.done, tag:t.tag} : t; });
+  saveData(); renderTasks();
+}
+function removeTask(id) {
+  tasks = tasks.filter(function(t) { return t.id !== id; });
+  saveData(); renderTasks();
+}
+function addTask() {
+  var inp = document.getElementById("taskInput");
+  var tag = document.getElementById("taskTag").value;
+  if (!inp.value.trim()) return;
+  tasks.push({id: Date.now(), text: inp.value.trim(), done: false, tag: tag});
+  inp.value = "";
+  saveData(); renderTasks();
+}
+document.getElementById("taskInput").addEventListener("keydown", function(e) { if (e.key === "Enter") addTask(); });
+
+function renderNotes() {
+  var grid = document.getElementById("noteGrid");
+  var view = document.getElementById("noteView");
+  var edit = document.getElementById("noteEdit");
+  var title = document.getElementById("notePageTitle");
+  grid.style.display = noteMode === "grid" ? "block" : "none";
+  view.style.display = noteMode === "view" ? "block" : "none";
+  edit.style.display = (noteMode === "edit" || noteMode === "new") ? "block" : "none";
+  if (title) title.textContent = noteMode === "new" ? "✿ Nouvelle note" : noteMode === "edit" ? "✿ Modifier" : "✿ Notes rapides";
+  if (noteMode === "grid") {
+    var html = "<div class='ngrid'>";
+    for (var i = 0; i < notes.length; i++) {
+      var n = notes[i];
+      html += "<div class='ntile' onclick='openNote(" + n.id + ")'>";
+      html += "<div class='ntitle'>" + n.title + "</div>";
+      html += "<div class='nbody'>" + n.body.replace(/\n/g, " ") + "</div>";
+      html += "<div class='ndate'>" + n.date + "</div></div>";
+    }
+    html += "<div class='nadd' onclick='newNote()'><span style='font-size:20px;color:#7A8C5C'>+</span> Nouvelle note</div></div>";
+    grid.innerHTML = html;
+  }
+  if (noteMode === "view" && activeNote) {
+    view.innerHTML = "<div class='card'>" +
+      "<div class='row' style='margin-bottom:13px;justify-content:space-between;flex-wrap:wrap;gap:7px'>" +
+      "<span style=\"font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600\">" + activeNote.title + "</span>" +
+      "<div class='row' style='gap:7px'>" +
+      "<button class='btn b-soft b-sm' onclick='editNote()'>Modifier</button>" +
+      "<button class='btn b-soft b-sm' style='color:#C4607A' onclick='deleteNote(" + activeNote.id + ")'>Supprimer</button>" +
+      "<button class='btn b-ghost b-sm' onclick=\"noteMode='grid';renderNotes()\">Retour</button>" +
+      "</div></div>" +
+      "<div style='font-size:13px;line-height:1.8;white-space:pre-wrap;color:var(--text)'>" + activeNote.body + "</div>" +
+      "<div style='font-size:11px;color:var(--muted);margin-top:11px'>" + activeNote.date + "</div>" +
+      "</div>";
+  }
+  if ((noteMode === "edit" || noteMode === "new") && activeNote) {
+    document.getElementById("noteTitleInput").value = activeNote.title || "";
+    document.getElementById("noteBodyInput").value = activeNote.body || "";
+  }
+}
+
+function openNote(id) { for(var i=0;i<notes.length;i++){if(notes[i].id===id){activeNote=notes[i];break;}} noteMode = "view"; renderNotes(); }
+function newNote() { activeNote = {id:null, title:"", body:"", date:""}; noteMode = "new"; renderNotes(); }
+function editNote() { noteMode = "edit"; renderNotes(); }
+function deleteNote(id) { notes = notes.filter(function(n) { return n.id !== id; }); saveData(); noteMode = "grid"; activeNote = null; renderNotes(); }
+function saveNote() {
+  var t = document.getElementById("noteTitleInput").value || "Sans titre";
+  var b = document.getElementById("noteBodyInput").value;
+  if (noteMode === "new") { var n = {id:Date.now(), title:t, body:b, date:"Maintenant"}; notes.unshift(n); activeNote = notes[0]; }
+  else { for(var i=0;i<notes.length;i++){if(notes[i].id===activeNote.id){notes[i].title=t;notes[i].body=b;notes[i].date="Maintenant";activeNote=notes[i];break;}} }
+  saveData(); noteMode = "view"; renderNotes();
+}
+function cancelNote() { noteMode = (activeNote && activeNote.id) ? "view" : "grid"; renderNotes(); }
+
+function renderCalendar() {
+  var strip = document.getElementById("weekStrip");
+  if (!strip) return;
+  var today = new Date();
+  var days = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+  var html = "";
+  for (var i = 0; i < 7; i++) {
+    var d = new Date(today);
+    d.setDate(today.getDate() - (today.getDay() || 7) + 1 + i);
+    var isTd = d.toDateString() === today.toDateString();
+    html += "<div class='dcell" + (isTd ? " td" : "") + "'><div class='dname'>" + days[i] + "</div><div class='dnum'>" + d.getDate() + "</div></div>";
+  }
+  strip.innerHTML = html;
+}
+
+function renderKeep() {
+  var cnt = document.getElementById("keepCount");
+  if (cnt) cnt.textContent = keepNotes.length + " notes";
+  var filtered = keepNotes.filter(function(n) {
+    if (keepFilter === "pinned") return n.pinned;
+    if (keepFilter === "travail") return n.labels && n.labels.indexOf("travail") >= 0;
+    if (keepFilter === "perso") return n.labels && n.labels.indexOf("perso") >= 0;
+    return true;
+  });
+  var pinned = filtered.filter(function(n) { return n.pinned; });
+  var rest = filtered.filter(function(n) { return !n.pinned; });
+  var ps = document.getElementById("keepPinned");
+  var kg = document.getElementById("keepGrid");
+  if (ps) ps.innerHTML = pinned.length ? "<div class='pinlbl'>Epinglees</div><div class='kgrid' style='margin-bottom:18px'>" + pinned.map(keepTileHTML).join("") + "</div>" : "";
+  if (kg) kg.innerHTML = "<div class='kgrid'>" + rest.map(keepTileHTML).join("") + "<div class='kadd' onclick=\"openKModal('note')\">+ Nouvelle note</div></div>";
+  var dKeep = document.getElementById("dKeep");
+  if (dKeep) dKeep.textContent = pinned.length;
+}
+
+function keepTileHTML(n) {
+  var bg = KC[n.color] || KC.rose;
+  var body = "";
+  if (n.type === "note") { body = "<div class='kbody2'>" + (n.body || "") + "</div>"; }
+  else if (n.items) {
+    for (var i = 0; i < Math.min(n.items.length, 4); i++) {
+      body += "<div class='kitem" + (n.items[i].d ? " dkk" : "") + "'><span>" + (n.items[i].d ? "☑" : "☐") + "</span><span>" + n.items[i].t + "</span></div>";
+    }
+    if (n.items.length > 4) body += "<div style='font-size:10px;color:#9C8690'>+" + (n.items.length - 4) + " autres</div>";
+  }
+  var labels = "";
+  if (n.labels) { for(var j=0;j<n.labels.length;j++) labels += "<span style='font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(255,255,255,.35);margin-right:3px;font-weight:600'>" + n.labels[j] + "</span>"; }
+  return "<div class='ktile' style='background:" + bg + "' onclick='editKeep(" + n.id + ")'>" +
+    (n.title ? "<div class='ktitle2'>" + n.title + "</div>" : "") +
+    body +
+    "<div class='kfoot'><div>" + labels + "</div>" +
+    "<div style='display:flex;gap:5px;align-items:center'><span style='font-size:10px'>" + n.date + "</span>" +
+    "<span onclick='event.stopPropagation();togglePin(" + n.id + ")' style='cursor:pointer;font-size:12px'>" + (n.pinned ? "📌" : "📍") + "</span></div></div>" +
+    "</div>";
+}
+
+function togglePin(id) { for(var i=0;i<keepNotes.length;i++){if(keepNotes[i].id===id){keepNotes[i].pinned=!keepNotes[i].pinned;break;}} saveData(); renderKeep(); }
+function filterKeep(f, btn) { keepFilter = f; document.querySelectorAll(".kfbtn").forEach(function(b){b.classList.remove("on");}); btn.classList.add("on"); renderKeep(); }
+
+function openKModal(type) {
+  keepEditId = null; kDraftType = type; kDraftColor = "rose"; kDraftItems = [];
+  document.getElementById("kModalTitle").textContent = "Nouvelle note";
+  document.getElementById("kTitle").value = "";
+  document.getElementById("kBody").value = "";
+  document.getElementById("kNoteArea").style.display = type === "note" ? "block" : "none";
+  document.getElementById("kListArea").style.display = type === "list" ? "block" : "none";
+  document.getElementById("kDelBtn").style.display = "none";
+  document.getElementById("kItemsList").innerHTML = "";
+  document.getElementById("kNewItem").value = "";
+  document.getElementById("kModalBox").style.background = KC.rose;
+  renderKColors();
+  document.getElementById("kModal").classList.add("on");
+}
+
+function editKeep(id) {
+  var n = null;
+  for (var i = 0; i < keepNotes.length; i++) { if (keepNotes[i].id === id) { n = keepNotes[i]; break; } }
+  if (!n) return;
+  keepEditId = id; kDraftType = n.type; kDraftColor = n.color || "rose";
+  kDraftItems = [];
+  if (n.items) { for(var j=0;j<n.items.length;j++) kDraftItems.push({t:n.items[j].t, d:n.items[j].d}); }
+  document.getElementById("kModalTitle").textContent = "Modifier la note";
+  document.getElementById("kTitle").value = n.title || "";
+  document.getElementById("kBody").value = n.body || "";
+  document.getElementById("kNoteArea").style.display = n.type === "note" ? "block" : "none";
+  document.getElementById("kListArea").style.display = n.type === "list" ? "block" : "none";
+  document.getElementById("kDelBtn").style.display = "inline-flex";
+  document.getElementById("kModalBox").style.background = KC[kDraftColor] || KC.rose;
+  renderKColors(); renderKItems();
+  document.getElementById("kModal").classList.add("on");
+}
+
+function renderKColors() {
+  var html = "";
+  for (var i = 0; i < KC_LIST.length; i++) {
+    var c = KC_LIST[i];
+    html += "<div class='cdot" + (kDraftColor === c.k ? " sel" : "") + "' style='background:" + c.h + "' onclick=\"setKColor('" + c.k + "')\"></div>";
+  }
+  document.getElementById("kColorPicker").innerHTML = html;
+}
+function setKColor(k) { kDraftColor = k; document.getElementById("kModalBox").style.background = KC[k] || KC.rose; renderKColors(); }
+
+function renderKItems() {
+  var html = "";
+  for (var i = 0; i < kDraftItems.length; i++) {
+    html += "<div style='display:flex;align-items:center;gap:8px;margin-bottom:6px'>" +
+      "<span style='cursor:pointer;font-size:15px' onclick='toggleKItem(" + i + ")'>" + (kDraftItems[i].d ? "☑" : "☐") + "</span>" +
+      "<span style='font-size:13px;flex:1;" + (kDraftItems[i].d ? "text-decoration:line-through;opacity:.5" : "") + "'>" + kDraftItems[i].t + "</span>" +
+      "</div>";
+  }
+  document.getElementById("kItemsList").innerHTML = html;
+}
+function toggleKItem(i) { kDraftItems[i].d = !kDraftItems[i].d; renderKItems(); }
+function addKItem() { var inp = document.getElementById("kNewItem"); if (!inp.value.trim()) return; kDraftItems.push({t:inp.value.trim(), d:false}); inp.value = ""; renderKItems(); }
+document.getElementById("kNewItem").addEventListener("keydown", function(e) { if (e.key === "Enter") addKItem(); });
+
+function saveKeep() {
+  var title = document.getElementById("kTitle").value;
+  var body = document.getElementById("kBody").value;
+  if (keepEditId) {
+    for (var i = 0; i < keepNotes.length; i++) {
+      if (keepNotes[i].id === keepEditId) { keepNotes[i].title = title; keepNotes[i].body = body; keepNotes[i].color = kDraftColor; keepNotes[i].items = kDraftItems; break; }
+    }
+  } else {
+    keepNotes.unshift({id:Date.now(), title:title, body:body, type:kDraftType, color:kDraftColor, pinned:false, labels:[], date:"Maintenant", items:kDraftItems});
+  }
+  saveData(); closeKModal(); renderKeep();
+}
+function deleteKeep() { if (keepEditId) keepNotes = keepNotes.filter(function(n) { return n.id !== keepEditId; }); saveData(); closeKModal(); renderKeep(); }
+function closeKModal() { document.getElementById("kModal").classList.remove("on"); }
+function closeKModalOutside(e) { if (e.target.id === "kModal") closeKModal(); }
+
+function renderDash() {
+  var done = tasks.filter(function(t) { return t.done; }).length;
+  var dTask = document.getElementById("dTask"); if (dTask) dTask.textContent = done + "/" + tasks.length;
+  var dNotes = document.getElementById("dNotes"); if (dNotes) dNotes.textContent = notes.length;
+  var dKeep = document.getElementById("dKeep"); if (dKeep) dKeep.textContent = keepNotes.filter(function(n){return n.pinned;}).length;
+  var du = document.getElementById("dashUrgent");
+  if (du) {
+    var urgent = tasks.filter(function(t) { return t.tag === "urgent" && !t.done; });
+    if (urgent.length === 0) { du.innerHTML = "<div style='text-align:center;padding:10px;color:var(--muted);font-size:13px'>Aucune tache urgente</div>"; return; }
+    var html = "";
+    for (var i = 0; i < urgent.length; i++) {
+      html += "<div style='display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)'>" +
+        "<div style='width:7px;height:7px;border-radius:50%;background:#E8A0B0;flex-shrink:0'></div>" +
+        "<span style='font-size:13px;flex:1'>" + urgent[i].text + "</span>" +
+        "<span class='tag tg-urgent'>urgent</span></div>";
+    }
+    du.innerHTML = html;
+  }
+}
+
+function renderAI() {
+  var grid = document.getElementById("tplGrid");
+  if (grid) {
+    var html = "";
+    for (var i = 0; i < TEMPLATES.length; i++) {
+      html += "<div class='tpl-tile' onclick='addTemplate(" + i + ")'>" +
+        "<div style='font-size:13px;font-weight:500;color:var(--text)'>" + TEMPLATES[i].label + "</div>" +
+        "<div style='font-size:10px;color:var(--muted);margin-top:3px'>" + TEMPLATES[i].tasks.length + " taches</div>" +
+        "</div>";
+    }
+    grid.innerHTML = html;
+  }
+  var tipEl = document.getElementById("tipCards");
+  if (tipEl) {
+    var idx = new Date().getDay() % TIPS.length;
+    var html2 = "";
+    for (var j = 0; j < 3; j++) {
+      var tip = TIPS[(idx + j) % TIPS.length];
+      html2 += "<div class='card' style='margin-bottom:10px;display:flex;gap:12px;align-items:flex-start'>" +
+        "<div style='font-size:24px;flex-shrink:0'>" + tip.icon + "</div>" +
+        "<div><div style=\"font-size:14px;font-weight:600;font-family:'Cormorant Garamond',serif;color:var(--text);margin-bottom:4px\">" + tip.title + "</div>" +
+        "<div style='font-size:12px;color:var(--muted);line-height:1.65'>" + tip.text + "</div></div>" +
+        "</div>";
+    }
+    tipEl.innerHTML = html2;
+  }
+}
+
+function addTemplate(i) {
+  var t = TEMPLATES[i];
+  if (!confirm("Ajouter les taches du template ?")) return;
+  for (var j = 0; j < t.tasks.length; j++) {
+    tasks.push({id: Date.now() + j, text: t.tasks[j], done: false, tag: "work"});
+  }
+  saveData(); renderTasks(); nav("tasks");
+}
+
+function flower(x, y, s, c, o) {
+  var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", s); svg.setAttribute("height", s); svg.setAttribute("viewBox", "0 0 80 80");
+  svg.style.cssText = "position:absolute;left:" + x + ";top:" + y + ";opacity:" + o;
+  var g = "<g transform='translate(40,40)'>";
+  for (var a = 0; a < 360; a += 45) {
+    var cx = (Math.cos(a * Math.PI / 180) * 16).toFixed(1);
+    var cy = (Math.sin(a * Math.PI / 180) * 16).toFixed(1);
+    g += "<ellipse cx='" + cx + "' cy='" + cy + "' rx='9' ry='13' fill='" + c + "' transform='rotate(" + a + "," + cx + "," + cy + ")'/>";
+  }
+  g += "<circle r='9' fill='#FFF3E8'/><circle r='5' fill='" + c + "' opacity='.6'/></g>";
+  svg.innerHTML = g;
+  document.getElementById("bgDeco").appendChild(svg);
+}
+function leaf(x, y, s, c, o, rot) {
+  var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", s); svg.setAttribute("height", s); svg.setAttribute("viewBox", "0 0 60 60");
+  svg.style.cssText = "position:absolute;left:" + x + ";top:" + y + ";opacity:" + o + ";transform:rotate(" + rot + "deg)";
+  svg.innerHTML = "<path d='M30 5 Q50 20 45 45 Q30 55 15 45 Q10 20 30 5Z' fill='" + c + "'/><path d='M30 8 Q30 28 30 50' stroke='#fff' stroke-width='1.5' fill='none' opacity='.35'/>";
+  document.getElementById("bgDeco").appendChild(svg);
+}
+
+function renderAll() { renderTasks(); renderNotes(); renderKeep(); renderCalendar(); renderDash(); renderAI(); }
+
+flower("89%","3%",70,"#E8A0B0",.16);
+leaf("2%","10%",52,"#7A8C5C",.12,-20);
+leaf("87%","34%",42,"#9AAD74",.1,30);
+flower("3%","52%",60,"#E8A0B0",.1);
+flower("88%","66%",46,"#D4778A",.13);
+flower("1%","79%",55,"#9AAD74",.1);
+flower("83%","87%",66,"#E8A0B0",.14);
+leaf("47%","1%",36,"#7A8C5C",.08,60);
+initDate();
+showExistingUsers();
+var saved = localStorage.getItem("wh_current");
+if (saved) {
+  var users = getUsers();
+  if (users[saved.toLowerCase()]) { loginUser(saved); }
+  else { document.getElementById("loginScreen").style.display = "flex"; }
+} else {
+  document.getElementById("loginScreen").style.display = "flex";
+}
+</script>
+</body>
+</html>
